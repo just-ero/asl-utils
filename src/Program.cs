@@ -54,7 +54,7 @@ if (choices.Contains(TraceSpyProgram))
     await DownloadTraceSpy();
 }
 
-if (choices.Contains(TraceSpyProgram))
+if (choices.Contains(TraceSpyConfig))
 {
     SpectreHelpers.WriteRule("TraceSpy Config");
 
