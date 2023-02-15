@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AslUtils;
 using Spectre.Console;
@@ -14,7 +17,7 @@ internal partial class Program
     private static async Task DownloadVsCodeSettings()
     {
         var settingsDir = Environment.ExpandEnvironmentVariables(SettingsDir);
-        Directory.CreateDirectory(settingsDir);
+        _ = Directory.CreateDirectory(settingsDir);
 
         var settingsFile = $"{settingsDir}/settings.json";
         if (File.Exists(settingsFile))
@@ -35,18 +38,14 @@ internal partial class Program
             PromptForVsCodeInstallDirectory();
         }
 
-        await SpectreHelpers.TryDownloadFile(SettingsUrl, settingsFile);
+        _ = await SpectreHelpers.TryDownloadFile(SettingsUrl, settingsFile);
 
         AnsiConsole.MarkupLine("[Green]Done.[/]");
     }
 
-    private static readonly string[] _extensions =
-    {
-        "ms-dotnettools.csharp",
-        "github.github-vscode-theme",
-        "eppz.eppz-code"
-    };
+    private const string ExtensionsUrl = "https://gist.github.com/just-ero/bdd5b0d8df6d2106830d978347b3443d/raw/extensions.json";
 
+    [RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Deserialize<TValue>(Stream, JsonSerializerOptions)")]
     private static async Task InstallVsCodeExtensions()
     {
         if (!VsCodeIsInstalled)
@@ -54,12 +53,34 @@ internal partial class Program
             PromptForVsCodeInstallDirectory();
         }
 
+        string[] extensions;
+
+        try
+        {
+            using var client = new HttpClient();
+            using var stream = await client.GetStreamAsync(ExtensionsUrl);
+
+            var jsonResponse = JsonSerializer.Deserialize<string[]>(stream);
+            if (jsonResponse is null)
+            {
+                return;
+            }
+
+            extensions = jsonResponse;
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.WriteException(ex);
+            return;
+        }
+
         AnsiConsole.MarkupLine($"[Yellow]Installing extensions...[/]");
         AnsiConsole.WriteLine();
 
-        using var installer = Process.Start(CodeCmd, string.Join(' ', _extensions.Select(e => $"--install-extension {e}")));
+        using var installer = Process.Start(CodeCmd, string.Join(' ', extensions.Select(e => $"--install-extension {e}")));
         await installer.WaitForExitAsync();
 
+        AnsiConsole.WriteLine();
         AnsiConsole.MarkupLine("[Green]Done.[/]");
     }
 
