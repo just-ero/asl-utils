@@ -43,17 +43,16 @@ internal partial class Program
         }
     }
 
-    private static bool CheckForVsCodeInRegistry(RegistryKey? key)
+    private static bool CheckForVsCodeInRegistry(RegistryKey key)
     {
-        key?.OpenSubKey(UninstallKeyName);
-        if (key is null)
+        if (key.OpenSubKey(UninstallKeyName) is not RegistryKey uninstallKey)
         {
             return false;
         }
 
-        foreach (string subKeyName in key.GetSubKeyNames())
+        foreach (string subKeyName in uninstallKey.GetSubKeyNames())
         {
-            using RegistryKey? subKey = key.OpenSubKey(subKeyName);
+            using var subKey = uninstallKey.OpenSubKey(subKeyName);
             if (subKey is null)
             {
                 continue;
