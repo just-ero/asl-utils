@@ -45,7 +45,6 @@ internal partial class Program
 
     private const string ExtensionsUrl = "https://gist.github.com/just-ero/bdd5b0d8df6d2106830d978347b3443d/raw/extensions.json";
 
-    [RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Deserialize<TValue>(Stream, JsonSerializerOptions)")]
     private static async Task InstallVsCodeExtensions()
     {
         if (!VsCodeIsInstalled)
@@ -74,7 +73,7 @@ internal partial class Program
             return;
         }
 
-        AnsiConsole.MarkupLine($"[Yellow]Installing extensions...[/]");
+        AnsiConsole.MarkupLine("[Yellow]Installing extensions...[/]");
         AnsiConsole.WriteLine();
 
         using var installer = Process.Start(CodeCmd, string.Join(' ', extensions.Select(e => $"--install-extension {e}")));

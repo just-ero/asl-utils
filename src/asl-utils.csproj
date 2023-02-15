@@ -5,6 +5,7 @@
     <TargetFramework>net7.0-windows</TargetFramework>
     <RootNamespace>AslUtils</RootNamespace>
 
+    <NoWarn>IL2026</NoWarn>
     <Nullable>enable</Nullable>
 
     <PublishSingleFile>true</PublishSingleFile>
