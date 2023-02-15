@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using AslUtils;
-using Microsoft.Win32;
 using Spectre.Console;
 
 internal partial class Program

@@ -30,7 +30,7 @@ internal partial class Program
             return;
         }
 
-        await SpectreHelpers.TryDownloadFile(TraceSpyDownloadUrl, traceSpyExe);
+        _ = await SpectreHelpers.TryDownloadFile(TraceSpyDownloadUrl, traceSpyExe);
     }
 
     private const string TraceSpyConfigDir = "%APPDATA%/TraceSpy";
@@ -39,7 +39,7 @@ internal partial class Program
     private static async Task DownloadTraceSpyConfig()
     {
         var configDir = Environment.ExpandEnvironmentVariables(TraceSpyConfigDir);
-        Directory.CreateDirectory(configDir);
+        _ = Directory.CreateDirectory(configDir);
 
         var configFile = $"{configDir}/WpfSettings.config";
         if (File.Exists(configFile))
@@ -55,7 +55,7 @@ internal partial class Program
             File.Move(configFile, $"{configDir}/backup.WpfSettings.config", true);
         }
 
-        await SpectreHelpers.TryDownloadFile(TraceSpyConfigDownloadUrl, configFile);
+        _ = await SpectreHelpers.TryDownloadFile(TraceSpyConfigDownloadUrl, configFile);
 
         AnsiConsole.MarkupLine("[Green]Done.[/]");
     }
