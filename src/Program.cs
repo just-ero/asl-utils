@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using AslUtils;
 using Spectre.Console;
 
@@ -97,3 +98,6 @@ if (choices.Contains(CascadiaCode))
         AnsiConsole.WriteLine();
     }
 }
+
+AnsiConsole.Markup("[Green]asl-help execution finished![/] Press any key to exit... ");
+Console.ReadKey(true);
